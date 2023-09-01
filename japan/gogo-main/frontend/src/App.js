@@ -15,6 +15,7 @@ import CartScreen from './screens/CartScreen';
 import SigninScreen from './screens/SignScreen';
 import ShippingAddress from './screens/ShippingAddress';
 import SignupScreen from './screens/SignUp';
+import PaymentMethod from './screens/PaymentMethod';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -24,6 +25,9 @@ function App() {
     //ctxDispatch是Store.js裡的dispatch function
     ctxDispatch({ type: 'USER_SIGNOUT' });
     localStorage.removeItem('userInfo');
+
+    localStorage.removeItem('shippingAddress');
+    localStorage.removeItem('paymentMethod');
   };
   return (
     <BrowserRouter>
@@ -79,6 +83,7 @@ function App() {
               <Route path="/signup" element={<SignupScreen />} />
 
               <Route path="/shipping" element={<ShippingAddress />} />
+              <Route path="/payment" element={<PaymentMethod />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>
