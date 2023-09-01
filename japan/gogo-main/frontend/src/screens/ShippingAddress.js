@@ -14,7 +14,7 @@ export default function ShippingAddress() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   //從購物車中獲取運送地址
   const {
-    useInfo,
+    userInfo,
     cart: { shippingAddress },
   } = state;
   //如果shippingAddress是空的，就設定fullName、address、city、postalCode、country都是空字串
@@ -26,11 +26,11 @@ export default function ShippingAddress() {
   );
 
   useEffect(() => {
-    if (!useInfo) {
+    if (!userInfo) {
       navigate('/signin?redirect=/shipping');
       //   navigate('/signin');
     }
-  }, [navigate, useInfo]);
+  }, [navigate, userInfo]);
 
   const [country, setCountry] = useState(shippingAddress.country || '');
 
