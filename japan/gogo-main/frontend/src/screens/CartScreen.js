@@ -39,6 +39,8 @@ export default function CartScreen() {
   };
 
   const checkoutHandler = () => {
+    //如果沒有登入，就導向登入頁面 並且把redirect的值設定為shipping
+    //三元表達 如果singin是true 就執行signin?redirect=/shipping
     navigate('/signin?redirect=/shipping');
   };
 

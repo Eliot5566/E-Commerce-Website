@@ -137,7 +137,7 @@ export default function PaymentMethod() {
             />
           </div>
           <div className="mb-3">
-            <Button type="submit">Continue</Button>
+            <Button type="submit">下一步</Button>
           </div>
         </Form>
       </div>
