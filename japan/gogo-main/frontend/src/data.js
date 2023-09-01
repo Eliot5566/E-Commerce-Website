@@ -1,0 +1,55 @@
+const data = {
+  products: [
+    {
+      _id: '1',
+      name: '經典原味銅鑼燒1入',
+      slug: '經典原味銅鑼燒',
+      category: '銅鑼燒',
+      image: '/images/p1.jpg',
+      price: 50,
+      countInStock: 10,
+      numReviews: 10,
+      rating: 5,
+      description: '高雄銅鑼燒',
+    },
+    {
+      _id: '2',
+      name: '红薯饅頭1入',
+      slug: '红薯饅頭1入',
+      category: '饅頭',
+      image: '/images/p2.jpg',
+      price: 50,
+      countInStock: 20,
+      numReviews: 10,
+      rating: 4.5,
+
+      description: '高雄饅頭',
+    },
+    {
+      _id: '3',
+      name: '草莓大福1入',
+      slug: '草莓大福1入',
+      category: '大福',
+      image: '/images/p3.jpg',
+      price: 50,
+      countInStock: 0,
+      numReviews: 10,
+      rating: 3.9,
+      description: '高雄大福',
+    },
+    {
+      _id: '4',
+      name: '梅酒羊羹1入',
+      slug: '梅酒羊羹1入',
+      category: '羊羹',
+      image: '/images/p4.jpg',
+      price: 50,
+      countInStock: 15,
+      numReviews: 10,
+      rating: 3.4,
+      description: '高雄羊羹',
+    },
+  ],
+};
+
+export default data;
