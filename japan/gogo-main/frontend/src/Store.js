@@ -50,8 +50,25 @@ function reducer(state, action) {
       localStorage.setItem('cartItems', JSON.stringify(cartItems));
       return { ...state, cart: { ...state.cart, cartItems } };
     }
+    case 'CART_CLEAR':
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
+
     case 'USER_SIGNIN':
       return { ...state, userInfo: action.payload };
+    // case 'USER_SIGNIN':
+    //   // 将用户信息和令牌添加到 userInfo 对象中
+    //   const { name, email, isAdmin, token } = action.payload;
+    //   const userInfo = {
+    //     name,
+    //     email,
+    //     isAdmin,
+    //     token,
+    //   };
+
+    //   // 将 userInfo 存储到本地存储
+    //   localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+    // return { ...state, userInfo };
     case 'USER_SIGNOUT':
       return {
         ...state,

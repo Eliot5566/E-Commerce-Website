@@ -9,11 +9,32 @@ import { Store } from '../Store';
 import { useContext } from 'react';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { useNavigate } from 'react-router-dom';
+import { useReducer } from 'react';
+import { toast } from 'react-toastify';
+import Axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+// import { useState } from 'react';
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'CREATE_REQUEST':
+      return { ...state, loading: true };
+    case 'CREATE_SUCCESS':
+      return { ...state, loading: false };
+    case 'CREATE_FAIL':
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
 export default function PlaceOrder() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
   const navigate = useNavigate();
+
+  const [{ loading }, dispatch] = useReducer(reducer, {
+    loading: false,
+  });
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100; //123.2345=>123.23
   cart.itemsPrice = round2(
@@ -23,7 +44,38 @@ export default function PlaceOrder() {
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice;
 
   cart.shippingPrice = cart.itemsPrice > 100 ? round2(0) : round2(10);
-  const placeOrderHandler = () => {};
+
+  // console.log(userInfo.token);
+
+  const placeOrderHandler = async () => {
+    try {
+      dispatch({ type: 'CREATE_REQUEST' });
+
+      const { data } = await Axios.post(
+        '/api/orders',
+        {
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          totalPrice: cart.totalPrice,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+      ctxDispatch({ type: 'CART_CLEAR' });
+      dispatch({ type: 'CREATE_SUCCESS' });
+      localStorage.removeItem('cartItems');
+      navigate(`/order/${data.order._id}`);
+    } catch (err) {
+      dispatch({ type: 'CREATE_FAIL' });
+      toast.error(err.response.data.message);
+    }
+  };
 
   useEffect(() => {
     if (!cart.paymentMethod) {
@@ -135,6 +187,7 @@ export default function PlaceOrder() {
                       Place Order
                     </Button>
                   </div>
+                  {loading && <LoadingBox></LoadingBox>}
                 </ListGroup.Item>
               </ListGroup>
             </Card.Body>

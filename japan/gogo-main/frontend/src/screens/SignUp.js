@@ -33,6 +33,14 @@ export default function SignupScreen() {
         email,
         password,
       });
+
+      // 在注册成功后，将用户令牌存储在本地存储中
+      localStorage.setItem('userInfo', JSON.stringify(data));
+
+      // ctxDispatch 是 Store.js 中的 dispatch 函数
+      // 用来更新 Store.js 中的 state userInfo
+      ctxDispatch({ type: 'USER_SIGNIN', payload: data });
+
       //ctxDispatch是Store.js裡的dispatch function
       //用來更新Store.js裡的state userInfo
       ctxDispatch({ type: 'USER_SIGNIN', payload: data });
