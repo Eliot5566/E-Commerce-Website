@@ -17,6 +17,7 @@ orderRouter.post(
   '/',
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    console.log('Received order request:', req.body.orderItems);
     let connection;
     try {
       //如何修改?  在async function 前面加上await 並且在pool.getConnection();後面加上.execute
@@ -35,7 +36,6 @@ orderRouter.post(
         user_id: req.user._id,
       };
 
-      // console.log(connection); // 在这里添加这行代码
       const [results] = await connection.execute(
         'INSERT INTO orders (order_items, shipping_address, payment_method, items_price, shipping_price, total_price, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
@@ -53,6 +53,37 @@ orderRouter.post(
         _id: results.insertId,
         ...newOrder,
       };
+
+      // 送出訂單後讓產品庫存量減少
+      for (const orderItem of req.body.orderItems) {
+        if (orderItem.quantity !== undefined && orderItem.name !== undefined) {
+          // 使用 execute 執行 SQL 查詢
+          const [productRows] = await connection.execute(
+            'SELECT * FROM products WHERE _id = ?',
+            [orderItem._id]
+          );
+
+          // 檢查查詢結果 是否有產品
+          if (productRows.length === 1) {
+            const product = productRows[0];
+            console.log('product:', product);
+            // 執行sql更新產品庫存
+            await connection.execute(
+              'UPDATE products SET countInStock	 = ? WHERE _id = ?',
+              [product.countInStock - orderItem.quantity, orderItem._id]
+            );
+          } else {
+            // 如果沒有產品，則輸出錯誤
+            console.error('Product not found for id:', orderItem._id);
+          }
+        } else {
+          // 處理錯誤
+          console.error('Undefined quantity or name:', orderItem);
+        }
+      }
+
+      // 確保連接被釋放回連接池
+      connection.release();
 
       res.status(201).send({ message: 'New Order Created', order });
     } catch (error) {
