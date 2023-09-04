@@ -26,6 +26,10 @@ const db = mysql.createPool({
 app.use(express.json());
 // 使用 express.urlencoded() 中介軟體來解析 URL 編碼的請求主體
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/api/keys/paypal', (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
+});
 // app.use('/api/seed', seedRouter);
 // 設定路由 /api/products 使用 mysqlProductRouter
 app.use('/api/products', mysqlProductRouter);

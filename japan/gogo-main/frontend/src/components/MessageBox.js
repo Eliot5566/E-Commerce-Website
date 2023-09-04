@@ -7,12 +7,10 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
 
-const MyComponent = () => {
+const MyComponent = (props) => {
   return (
     <div>
-      <Alert variant="danger">
-        This is an error alert — check it out!
-      </Alert>
+      <Alert variant={props.variant || 'info'}>{props.children}</Alert>
     </div>
   );
 };

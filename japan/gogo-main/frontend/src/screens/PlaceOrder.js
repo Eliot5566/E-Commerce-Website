@@ -41,7 +41,13 @@ export default function PlaceOrder() {
     cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
   );
   //   cart.taxPrice = round2(0.15 * cart.itemsPrice);
+  //晚點改回來
+  //晚點改回來
+  //晚點改回來
+  //晚點改回來
+  //晚點改回來
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice;
+  // cart.totalPrice = cart.itemsPrice;
 
   cart.shippingPrice = cart.itemsPrice > 100 ? round2(0) : round2(10);
 

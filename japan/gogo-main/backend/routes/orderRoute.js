@@ -96,7 +96,8 @@ orderRouter.post(
     }
   })
 );
-
+//設定路由 /api/orders/:id 使用 mysqlOrderRouter
+//用來顯示訂單資料
 orderRouter.get(
   '/:id',
   isAuth,
@@ -132,6 +133,54 @@ orderRouter.get(
     }
   })
 );
+
+orderRouter.put(
+  '/:id/pay',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    // 使用参数化查询以防止 SQL 注入攻击
+    const orderId = req.params.id;
+    const userId = req.user._id;
+
+    let connection;
+    try {
+      connection = await pool.promise().getConnection();
+
+      // 使用 JOIN 查询订单和用户，前提是 orders 表中有 user_id 列用于关联
+      const [orderResult] = await connection.execute(
+        'SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.user_id = u._id WHERE o.id = ? AND o.user_id = ?',
+        [orderId, userId]
+      );
+
+      if (orderResult.length === 1) {
+        const order = orderResult[0];
+        console.log('order:', order);
+        order.isPaid = true;
+        order.paidAt = new Date();
+
+        // 使用 execute 執行 SQL 查詢
+        await connection.execute(
+          'UPDATE orders SET is_paid = ?, paid_at = ? WHERE id = ?',
+          [order.isPaid, order.paidAt, orderId]
+        );
+        // Update the order.isPaid field in your code
+        order.is_paid = true;
+        order.paid_at = new Date();
+        res.send({ message: 'Order Paid', order });
+      } else {
+        res.status(404).send({ message: 'Order Not Found' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Error fetching order' });
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
+  })
+);
+
 module.exports = orderRouter;
 
 // const mysql = require('mysql2'); // 使用 require 导入库
